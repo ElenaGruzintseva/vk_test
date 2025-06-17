@@ -17,12 +17,24 @@ def train(model, dataloader, epochs=5):
             video = batch["video"].to(device)
             label = batch["label"].to(device)
 
-            logits = model(audio, video)
-            loss = criterion(logits, label)
+            if label is None or torch.isnan(label).any():
+                print("⚠️ Пропуск батча — метка некорректна")
+                continue
 
-            optimizer.zero_grad()
+            logits = model(audio, video)
+
+            prob = torch.sigmoid(logits).item()
+
+            print(f"Logits: {logits.item()}, Prob: {prob:.4f}, Label: {label.item()}")
+
+            if logits is None or torch.isnan(logits).any():
+                print("⚠️ Пропуск батча — логиты некорректны")
+                continue
+
+            loss = criterion(logits, label)
             loss.backward()
             optimizer.step()
+            optimizer.zero_grad()
 
             total_loss += loss.item()
         print(f"Epoch {epoch+1}, Loss: {total_loss:.4f}")

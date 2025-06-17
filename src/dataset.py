@@ -8,9 +8,8 @@ from src.video import extract_clip_embeddings
 
 
 class IntroDataset(Dataset):
-    def __init__(self, root_dir, labels_file, sr=22050):
+    def __init__(self, root_dir, labels_file):
         self.root_dir = root_dir
-        self.sr = sr
 
         with open(labels_file) as f:
             raw_labels = json.load(f)
@@ -26,6 +25,8 @@ class IntroDataset(Dataset):
 
     @staticmethod
     def time_to_seconds(t: str) -> int:
+        if isinstance(t, int):
+            return t
         parts = list(map(int, t.split(":")))
         if len(parts) == 3:
             return parts[0] * 3600 + parts[1] * 60 + parts[2]
@@ -40,10 +41,17 @@ class IntroDataset(Dataset):
     def __getitem__(self, idx):
         filename = self.files[idx]
         path = os.path.join(self.root_dir, filename)
+
         label = self.labels.get(filename, {"start": 0, "end": 0})
 
         try:
-            audio_features = extract_mfcc(path, sr=self.sr)
+            is_intro = 1 if label["start"] < label["end"] else 0
+        except (TypeError, KeyError):
+            print(f"Ошибка в метке для {filename}: {label}")
+            is_intro = 0
+
+        try:
+            audio_features = extract_mfcc(path)
         except Exception as e:
             print(f"Ошибка при обработке аудио {filename}: {e}")
             audio_features = np.zeros((100, 13))
@@ -52,9 +60,9 @@ class IntroDataset(Dataset):
             video_features = extract_clip_embeddings(path)
         except Exception as e:
             print(f"Ошибка при обработке видео {filename}: {e}")
-            video_features = torch.zeros((8, 512))
+            video_features = np.zeros((8, 512))
 
-        is_intro = 1 if label["start"] <= 0 < label["end"] else 0
+        print(f"Файл {filename}, is_intro={is_intro}")
 
         return {
             "audio": torch.tensor(audio_features, dtype=torch.float32),

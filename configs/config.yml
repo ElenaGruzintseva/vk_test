@@ -1,3 +1,12 @@
+# Data paths
+data:
+  train: data/train/
+  test: data/test/
+  val: data/val/
+
+labels_train: data/labels_train.json
+labels_test: data/labels_test.json
+
 # Audio params
 sr: 22050
 n_mfcc: 13
@@ -5,6 +14,7 @@ hop_length: 512
 
 # Video params
 n_frames: 8
+fps: 30
 clip_model_name: clip-ViT-B-32
 
 # Model params
@@ -14,9 +24,9 @@ hidden_dim: 256
 num_heads: 4
 
 # Training params
-batch_size: 2
+batch_size: 1
 epochs: 5
 learning_rate: 1e-4
 
 # Inference params
-threshold: 0.5
+threshold: 0.2
