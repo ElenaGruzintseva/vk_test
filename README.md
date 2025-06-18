@@ -44,4 +44,4 @@ pip install -r requirements.txt
 
 3. Запустите run_train.py для обучения модели
 
-4. Запустите run_test.py для тестирования модели
+4. Запустите run_inference.py для тестирования модели
