@@ -8,8 +8,12 @@ import json
 
 def main():
     parser = argparse.ArgumentParser(description="Detect intro in TV series")
-    parser.add_argument("--threshold", type=float, default=0.5, help="Probability threshold")
-    parser.add_argument("--save_to", type=str, default="results.json", help="Output file")
+    parser.add_argument(
+        "--threshold", type=float, default=0.5, help="Probability threshold"
+    )
+    parser.add_argument(
+        "--save_to", type=str, default="results.json", help="Output file"
+    )
     args = parser.parse_args()
 
     model = MultimodalIntroModel()
@@ -20,7 +24,7 @@ def main():
     test_dir = "data/test"
     result = {}
 
-    print(f"🔍 Обрабатываем файлы из {test_dir}")
+    print(f"Обрабатываем файлы из {test_dir}")
     for filename in os.listdir(test_dir):
         if filename.endswith(".mp4"):
             video_path = os.path.join(test_dir, filename)

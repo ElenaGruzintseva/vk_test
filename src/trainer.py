@@ -18,17 +18,17 @@ def train(model, dataloader, epochs=5):
             label = batch["label"].to(device)
 
             if label is None or torch.isnan(label).any():
-                print("⚠️ Пропуск батча — метка некорректна")
+                print("Пропуск батча — метка некорректна")
                 continue
 
             logits = model(audio, video)
 
             prob = torch.sigmoid(logits).item()
 
-            print(f"Logits: {logits.item()}, Prob: {prob:.4f}, Label: {label.item()}")
+            print(f"Logits: {logits.item()},Prob: {prob:.4f}, Label: {label.item()}")
 
             if logits is None or torch.isnan(logits).any():
-                print("⚠️ Пропуск батча — логиты некорректны")
+                print("Пропуск батча — логиты некорректны")
                 continue
 
             loss = criterion(logits, label)
